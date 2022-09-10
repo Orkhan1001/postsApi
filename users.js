@@ -17,6 +17,14 @@ router.get("/users", (req, res) => {
 // Registiration
 router.post("/registiration", async (req, res) => {
   const { username, fullName, password } = req.body;
+
+  if(!username||!fullName||!password){
+    res.status(400).send({
+      message:"Username, FullName, Password can not be empty!"
+    });
+    return;
+  }
+
   const hashedpassword = crypto
     .pbkdf2Sync(password, SALT, 100000, 64, "sha512")
     .toString("hex");
@@ -47,6 +55,14 @@ router.post("/registiration", async (req, res) => {
 // Login
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
+
+  if(!username||!password){
+    res.status(400).send({
+      message: "Username, Password can not be empty!"
+    });
+    return;
+  }
+  
   const hashedpassword = crypto
     .pbkdf2Sync(password, SALT, 100000, 64, "sha512")
     .toString("hex");

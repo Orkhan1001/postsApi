@@ -16,6 +16,14 @@ router.get("/posts", async(req, res) => {
 //Create the post
 router.post("/posts", async(req, res) => {
   const{title, body, tags=[]} = req.body;
+
+  if(!title||!body){
+    res.status(400).send({
+      message: "Post title or content can not be empty!"
+    });
+    return;
+  }
+
   await client.query(`
     INSERT INTO posts(title, body, tags, user_id)
     VALUES($1, $2, $3, $4);`,
@@ -27,6 +35,12 @@ router.post("/posts", async(req, res) => {
 
 // Create Comment
 router.post("/posts/:id/comments", async(req, res)=>{
+  if(!req.body.content){
+    res.status(400).send({
+      message:"Content can not be empy!"
+    });
+    return;
+  }
   await client.query(`
     INSERT INTO comments(body, user_id, post_id)
     VALUES($1, $2, $3);`
@@ -103,7 +117,6 @@ router.patch("/posts/:id", (req, res) => {
 
 //Delete the post
 router.delete("/posts/:id", async(req, res) => {
-  // const index = posts.findIndex((post) => post.id === req.params.id);
   const result = await client.query(`
     SELECT * FROM posts WHERE id=$1`
   ,[req.params.id]);
