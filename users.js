@@ -10,8 +10,9 @@ const SECRET_KEY = process.env.SECRET_KEY;
 const SALT = process.env.SALT;
 
 // get all users
-router.get("/users", (req, res) => {
-  res.status(200).send(users);
+router.get("/users", async(req, res) => {
+  const result = await client.query(`SELECT * FROM users`);
+  res.status(200).send(result.rows);
 });
 
 // Registiration
@@ -62,11 +63,10 @@ router.post("/login", async (req, res) => {
     });
     return;
   }
-  
+
   const hashedpassword = crypto
     .pbkdf2Sync(password, SALT, 100000, 64, "sha512")
     .toString("hex");
-  console.log(hashedpassword);
   const result = await client.query(
     `SELECT * FROM users 
     WHERE username=$1 AND password=$2`,
