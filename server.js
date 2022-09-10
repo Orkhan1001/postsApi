@@ -27,7 +27,9 @@ app.use((req, res, next)=>{
     });
   }
   else{
-    res.status(401).send("Unauthorized request");
+    res.status(401).send({
+      message: "Unauthorized Userr!"
+    });
   }
 
 });
